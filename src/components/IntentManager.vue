@@ -1,46 +1,60 @@
 <template>
-  <div class="max-w-5xl mx-auto p-6">
-    <h2 class="text-3xl font-bold text-gray-800 mb-8">🎯 Manajemen Chatbot Intents</h2>
+  <div class="p-6 bg-gray-100 min-h-screen">
+    <h2 class="text-3xl font-bold text-center text-blue-700 mb-8 flex items-center justify-center gap-2">
+      <LucideTarget /> Manajemen Chatbot Intents
+    </h2>
+     <div class="flex justify-end mb-4">
+      <button @click="logout" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition">
+        <LucideLogOut class="inline w-4 h-4 mr-1" /> Logout
+      </button>
+    </div>
 
-    <!-- FORM -->
-    <form @submit.prevent="createIntent" class="bg-white p-6 rounded-xl shadow-md space-y-4 mb-8 border border-gray-200 ">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <input v-model="newIntent.id" placeholder="ID" required class="input-field" />
-        <input v-model="newIntent.name" placeholder="Intent Name" required class="input-field" />
-        <input v-model="newIntent.description" placeholder="Description" required class="input-field" />
-      </div>
-
-      <div class="flex flex-col sm:flex-row justify-end gap-4">
-        <button type="submit" class="btn-primary">💾 Simpan</button>
-        <button type="button" @click="resetForm" class="btn-secondary">❌ Batal</button>
-      </div>
-    </form>
-
-    <!-- TABEL -->
-    <div class="overflow-auto bg-white rounded-xl shadow-md border border-gray-200">
-      <table class="w-full min-w-[600px] table-auto text-left ">
-        <thead class="bg-gray-100 text-gray-700 font-semibold flex justify-content-center">
+    <!-- Form -->
+    <div class="bg-white p-6 rounded-xl shadow-md max-w-3xl mx-auto mb-8">
+      <h3 class="text-xl font-semibold mb-4">Tambah / Edit Intent</h3>
+      <form @submit.prevent="handleSubmit" class="space-y-4">
+        <div>
+          <label class="block font-medium mb-1">Nama</label>
+          <input v-model="form.name" placeholder="Nama" type="text" class="w-full p-2 border rounded-lg" />
+        </div>
+        <div>
+          <label class="block font-medium mb-1">Deskripsi</label>
+          <textarea v-model="form.description" placeholder="Deskripsi" rows="2" class="w-full p-2 border rounded-lg"></textarea>
+        </div>
+        <div class="flex gap-2 justify-end">
+          <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+            <LucideSave class="inline w-4 h-4 mr-1" /> Simpan
+          </button>
+          <button @click="resetForm" type="button" class="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-400 transition">
+            <LucideX class="inline w-4 h-4 mr-1" /> Batal
+          </button>
+        </div>
+      </form>
+    </div>
+    
+    <!-- Tabel -->
+    <div class="bg-white rounded-xl shadow-md max-w-3xl mx-auto mb-8">
+      <table class="min-w-full rounded-xl">
+        <thead class="bg-blue-600 text-white rounded-xl">
           <tr>
-            <th class="p-4">ID</th>
-            <th class="p-4">Name</th>
-            <th class="p-4">Description</th>
-            <th class="p-4">Aksi</th>
+            <th class="px-4 py-2 text-left">ID</th>
+            <th class="px-4 py-2 text-left">Name</th>
+            <th class="px-4 py-2 text-left">Description</th>
+            <th class="px-4 py-2 text-center">Aksi</th>
           </tr>
         </thead>
         <tbody>
-          <tr
-            v-for="intent in intents"
-            :key="intent.id"
-            class="border-t hover:bg-gray-50 transition"
-          >
-            <td class="p-4">{{ intent.id }}</td>
-            <td class="p-4">{{ intent.name }}</td>
-            <td class="p-4">{{ intent.description }}</td>
-            <td class="p-4">
-              <div class="flex space-x-2">
-                <button @click="editIntent(intent)" class="btn-icon blue">✏️ Edit</button>
-                <button @click="deleteIntent(intent.id)" class="btn-icon red">🗑️ Hapus</button>
-              </div>
+          <tr v-for="intent in intents" :key="intent.id" class="border-b hover:bg-gray-50">
+            <td class="px-4 py-2">{{ intent.id }}</td>
+            <td class="px-4 py-2">{{ intent.name }}</td>
+            <td class="px-4 py-2">{{ intent.description }}</td>
+            <td class="px-4 py-2 text-center flex justify-center gap-2">
+              <button @click="editIntent(intent)" class="text-blue-600 hover:text-blue-800">
+                <LucidePencil class="w-4 h-4" />
+              </button>
+              <button @click="deleteIntent(intent.id)" class="text-red-600 hover:text-red-800">
+                <LucideTrash2 class="w-4 h-4" />
+              </button>
             </td>
           </tr>
         </tbody>
@@ -51,74 +65,63 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { LucideSave, LucideX, LucidePencil, LucideTrash2, LucideTarget } from 'lucide-vue-next'
 import api from '../service/api'
 
 const intents = ref([])
-const newIntent = ref({ id: '', name: '', description: '' })
+const form = ref({ id: null, name: '', description: '' })
 
-const fetchIntents = async () => {
+const loadIntents = async () => {
   try {
-    const response = await api.get('/chatbot/intents')
-    intents.value = response.data.data
+    const res = await api.get('/chatbot/intents') // Ubah endpoint
+    console.log('Data dari API:', res.data)
+    intents.value = res.data.data // Sesuaikan struktur
   } catch (error) {
-    console.error('Failed to fetch intents:', error)
+    console.error('Gagal mengambil data intents:', error)
   }
 }
 
-const createIntent = async () => {
+const handleSubmit = async () => {
   try {
-    await api.post('/chatbot/intents', newIntent.value)
+    if (form.value.id) {
+      await api.put(`/chatbot/intents/${form.value.id}`, form.value)
+    } else {
+      await api.post('/chatbot/intents', form.value)
+    }
     resetForm()
-    fetchIntents()
+    loadIntents()
   } catch (error) {
-    console.error('Failed to create intent:', error)
+    console.error('Gagal menyimpan intent:', error)
   }
-}
-
-const deleteIntent = async (id) => {
-  try {
-    await api.delete(`/chatbot/intents/${id}`)
-    fetchIntents()
-  } catch (error) {
-    console.error('Failed to delete intent:', error)
-  }
-}
-
-const editIntent = (intent) => {
-  newIntent.value = { ...intent }
 }
 
 const resetForm = () => {
-  newIntent.value.id = ''
-  newIntent.value.name = ''
-  newIntent.value.description = ''
+  form.value = { id: null, name: '', description: '' }
 }
 
-onMounted(fetchIntents)
+const editIntent = (intent) => {
+  form.value = { ...intent }
+}
+
+const deleteIntent = async (id) => {
+  if (confirm('Yakin ingin menghapus?')) {
+    try {
+      await api.delete(`/chatbot/intents/${id}`)
+      loadIntents()
+    } catch (error) {
+      console.error('Gagal menghapus intent:', error)
+    }
+  }
+}
+
+onMounted(() => {
+  loadIntents()
+})
 </script>
 
 <style scoped>
-.input-field {
-  @apply w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition bg-white text-gray-800;
-}
-
-.btn-primary {
-  @apply bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-blue-400;
-}
-
-.btn-secondary {
-  @apply bg-gray-500 text-white px-5 py-2 rounded-lg hover:bg-gray-600 transition focus:outline-none focus:ring-2 focus:ring-gray-300;
-}
-
-.btn-icon {
-  @apply text-sm px-4 py-1.5 rounded-lg font-medium transition;
-}
-
-.btn-icon.blue {
-  @apply bg-blue-500 text-white hover:bg-blue-600 focus:ring-blue-300;
-}
-
-.btn-icon.red {
-  @apply bg-red-500 text-white hover:bg-red-600 focus:ring-red-300;
+table th,
+table td {
+  padding: 0.75rem;
 }
 </style>

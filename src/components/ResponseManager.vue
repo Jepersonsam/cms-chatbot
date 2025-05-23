@@ -138,22 +138,4 @@ onMounted(fetchResponses)
 </script>
 
 <style scoped>
-.input-field {
-  @apply w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition;
-}
-.btn-primary {
-  @apply bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-blue-400;
-}
-.btn-secondary {
-  @apply bg-gray-400 text-white px-5 py-2 rounded-lg hover:bg-gray-500 transition focus:outline-none focus:ring-2 focus:ring-gray-300;
-}
-.btn-icon {
-  @apply text-sm px-3 py-1 rounded-lg font-semibold transition;
-}
-.btn-icon.blue {
-  @apply bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-400;
-}
-.btn-icon.red {
-  @apply bg-red-600 text-white hover:bg-red-700 focus:ring-red-400;
-}
 </style>
