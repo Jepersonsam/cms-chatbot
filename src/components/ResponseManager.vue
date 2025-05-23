@@ -1,98 +1,70 @@
 <template>
-  <div class="container mx-auto p-6">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6">Chatbot Responses</h2>
-
-    <form @submit.prevent="createResponse" class="bg-white p-6 rounded-lg shadow-md mb-6">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <input
-          v-model="newResponse.intent_id"
-          placeholder="Intent ID"
-          required
-          class="input-field"
-        />
-        <input
-          v-model="newResponse.response_text"
-          placeholder="Response Text"
-          required
-          class="input-field"
-        />
-        <input
-          v-model="newResponse.type"
-          placeholder="Type (e.g., SOL_KEY)"
-          required
-          class="input-field"
-        />
-        <input
-          v-model="newResponse.value"
-          placeholder="Value"
-          required
-          class="input-field"
-        />
-        <input
-          v-model="newResponse.params"
-          placeholder="Params"
-          required
-          class="input-field"
-        />
+  <div class="max-w-5xl mx-auto p-6">
+    <h2 class="text-3xl font-bold text-gray-800 mb-8 flex items-center justify-center gap-2">
+      🎯 Manajemen Chatbot Responses
+    </h2>
+    <div v-if="isAuthenticated" class="bg-white p-6 rounded-xl shadow-md">
+      <h3 class="text-xl font-semibold mb-4">Tambah / Edit Response</h3>
+      <form @submit.prevent="createResponse" class="space-y-4">
+        <div>
+          <label class="block font-medium mb-1">Intent ID</label>
+          <input v-model="newResponse.intent_id" placeholder="Intent ID" required class="w-full p-2 border border-gray-300 rounded-lg" />
+        </div>
+        <div>
+          <label class="block font-medium mb-1">Response Text</label>
+          <textarea v-model="newResponse.response_text" rows="3" class="w-full p-2 border border-gray-300 rounded-lg"></textarea>
+        </div>
+        <div class="flex gap-2 justify-end">
+          <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+            <LucideSave class="inline w-4 h-4 mr-1" /> Simpan
+          </button>
+          <button @click="resetForm" type="button" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition">
+            <LucideX class="inline w-4 h-4 mr-1" /> Batal
+          </button>
+        </div>
+      </form>
+      <div class="mt-6">
+        <table class="min-w-full">
+          <thead class="bg-blue-600 text-white">
+            <tr>
+              <th class="px-4 py-2 text-left">ID</th>
+              <th class="px-4 py-2 text-left">Intent ID</th>
+              <th class="px-4 py-2 text-left">Response Text</th>
+              <th class="px-4 py-2 text-center">Aksi</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="response in responses" :key="response.id" class="border-b hover:bg-gray-50">
+              <td class="px-4 py-2">{{ response.id }}</td>
+              <td class="px-4 py-2">{{ response.intent_id }}</td>
+              <td class="px-4 py-2">{{ response.response_text }}</td>
+              <td class="px-4 py-2 text-center flex justify-center gap-2">
+                <button @click="editResponse(response)" class="text-blue-600 hover:text-blue-800">
+                  <LucidePencil class="w-4 h-4" />
+                </button>
+                <button @click="deleteResponse(response.id)" class="text-red-600 hover:text-red-800">
+                  <LucideTrash2 class="w-4 h-4" />
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-      <div class="mt-4 flex space-x-2">
-        <button type="submit" class="btn-primary">
-          💾 Simpan
-        </button>
-        <button type="button" @click="resetForm" class="btn-secondary">
-          ❌ Batal
-        </button>
-      </div>
-    </form>
-
-    <div class="bg-white rounded-lg shadow-md overflow-x-auto">
-      <table class="w-full text-left">
-        <thead class="bg-gray-100 text-gray-700">
-          <tr>
-            <th class="p-3">ID</th>
-            <th class="p-3">Intent ID</th>
-            <th class="p-3">Response Text</th>
-            <th class="p-3">Type</th>
-            <th class="p-3">Value</th>
-            <th class="p-3">Params</th>
-            <th class="p-3">Aksi</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="response in responses" :key="response.id" class="border-b hover:bg-gray-50">
-            <td class="p-3">{{ response.id }}</td>
-            <td class="p-3">{{ response.intent_id }}</td>
-            <td class="p-3">{{ response.response_text }}</td>
-            <td class="p-3">{{ response.type }}</td>
-            <td class="p-3">{{ response.value }}</td>
-            <td class="p-3">{{ response.params }}</td>
-            <td class="p-3 flex space-x-2">
-              <button @click="editResponse(response)" class="btn-icon blue">
-                ✏️ Edit
-              </button>
-              <button @click="deleteResponse(response.id)" class="btn-icon red">
-                🗑️ Hapus
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
     </div>
+    <div v-else class="text-red-600 text-center">Anda harus login untuk mengakses halaman ini.</div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import api from '../service/api'
 
 const responses = ref([])
 const newResponse = ref({
   intent_id: '',
-  response_text: '',
-  type: '',
-  value: '',
-  params: ''
+  response_text: ''
 })
+const isAuthenticated = computed(() => !!localStorage.getItem('token'))
 
 const fetchResponses = async () => {
   try {
@@ -107,7 +79,7 @@ const createResponse = async () => {
   try {
     await api.post('/chatbot/responses', newResponse.value)
     resetForm()
-    fetchResponses()
+    fetchResponses() // Refresh data setelah simpan
   } catch (error) {
     console.error('Failed to create response:', error)
   }
@@ -116,7 +88,7 @@ const createResponse = async () => {
 const deleteResponse = async (id) => {
   try {
     await api.delete(`/chatbot/responses/${id}`)
-    fetchResponses()
+    fetchResponses() // Refresh data setelah hapus
   } catch (error) {
     console.error('Failed to delete response:', error)
   }
@@ -127,15 +99,24 @@ const editResponse = (response) => {
 }
 
 const resetForm = () => {
-  newResponse.value.intent_id = ''
-  newResponse.value.response_text = ''
-  newResponse.value.type = ''
-  newResponse.value.value = ''
-  newResponse.value.params = ''
+  newResponse.value = {
+    intent_id: '',
+    response_text: ''
+  }
 }
 
-onMounted(fetchResponses)
-</script>
+onMounted(() => {
+  if (isAuthenticated.value) {
+    fetchResponses() // Panggil saat komponen dimuat
+  } else {
+    window.location.href = '/login'
+  }
+})
 
-<style scoped>
-</style>
+// Watch untuk memeriksa perubahan rute atau autentikasi
+watch(isAuthenticated, (newValue) => {
+  if (newValue) {
+    fetchResponses() // Refresh data saat autentikasi berubah (misalnya login)
+  }
+})
+</script>

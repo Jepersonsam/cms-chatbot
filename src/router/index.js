@@ -6,12 +6,12 @@ import QuestionManager from '../components/QuestionManager.vue'
 import ResponseManager from '../components/ResponseManager.vue'
 
 const routes = [
-  { path: '/login', name: 'Login', component: Login },
-  { path: '/register', name: 'Register', component: Register },
-  { path: '/intents', name: 'IntentManager', component: IntentManager, meta: { requiresAuth: true } },
-  { path: '/questions', name: 'QuestionManager', component: QuestionManager, meta: { requiresAuth: true } },
-  { path: '/responses', name: 'ResponseManager', component: ResponseManager, meta: { requiresAuth: true } },
-  { path: '/', redirect: '/intent' } // Redirect ke halaman intents sebagai default
+  { path: '/', redirect: '/login' }, // Halaman awal diarahkan ke /login
+  { path: '/login', component: Login },
+  { path: '/register', component: Register },
+  { path: '/intents', component: IntentManager, meta: { requiresAuth: true } },
+  { path: '/questions', component: QuestionManager, meta: { requiresAuth: true } },
+  { path: '/responses', component: ResponseManager, meta: { requiresAuth: true } }
 ]
 
 const router = createRouter({
@@ -21,10 +21,11 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('token')
+  console.log('Checking token:', token) // Debug log
   if (to.meta.requiresAuth && !token) {
     next('/login') // Redirect ke login jika tidak ada token
   } else {
-    next() // Izinkan akses jika ada token atau rute tidak memerlukan autentikasi
+    next() // Izinkan akses jika ada token
   }
 })
 
