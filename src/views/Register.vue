@@ -46,11 +46,8 @@
           </div>
 
           <div class="flex justify-end gap-4">
-            <button type="submit" class="flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
               <LucideSave class="inline w-4 h-4 mr-1" /> Daftar
-            </button>
-            <button type="button" @click="resetForm" class="flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gray-500 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
-              <LucideX class="inline w-4 h-4 mr-1" /> Batal
             </button>
           </div>
         </form>
@@ -70,7 +67,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { LucideSave, LucideX } from 'lucide-vue-next'
+import { LucideSave } from 'lucide-vue-next'
 import api from '../service/api'
 
 const form = ref({
@@ -98,14 +95,5 @@ const register = async () => {
     error.value = 'Registrasi gagal. Coba lagi.'
     console.error('Error:', err)
   }
-}
-
-const resetForm = () => {
-  form.value.name = ''
-  form.value.email = ''
-  form.value.password = ''
-  form.value.password_confirmation = ''
-  error.value = ''
-  success.value = false
 }
 </script>
