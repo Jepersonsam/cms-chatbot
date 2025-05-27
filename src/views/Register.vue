@@ -1,7 +1,6 @@
 <template>
   <div class="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8" style="background-image: url('https://i.pinimg.com/736x/b8/f8/fa/b8f8fa8d2eaa6518253f301eadac06b0.jpg');">
     <div class="sm:mx-auto sm:w-full sm:max-w-md">
-      <img class="mx-auto h-28 w-auto" src="https://static.vecteezy.com/system/resources/previews/007/794/726/original/travel-bus-illustration-logo-on-light-background-free-vector.jpg" alt="Workflow">
       <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
         Registrasi Admin
       </h2>

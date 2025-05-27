@@ -1,17 +1,51 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Login from '../views/Login.vue'
 import Register from '../views/Register.vue'
+import Dashboard from '../views/Dashboard.vue'
+import ManageChatbot from '../views/ManageChatbot.vue'
 import IntentManager from '../components/IntentManager.vue'
 import QuestionManager from '../components/QuestionManager.vue'
 import ResponseManager from '../components/ResponseManager.vue'
 
 const routes = [
-  { path: '/', redirect: '/login' }, // Halaman awal diarahkan ke /login
+  {
+    path: '/',
+    redirect: () => {
+      const token = localStorage.getItem('token')
+      return token ? '/dashboard' : '/login'
+    }
+  },
   { path: '/login', component: Login },
   { path: '/register', component: Register },
-  { path: '/intents', component: IntentManager, meta: { requiresAuth: true } },
-  { path: '/questions', component: QuestionManager, meta: { requiresAuth: true } },
-  { path: '/responses', component: ResponseManager, meta: { requiresAuth: true } }
+  {
+    path: '/dashboard',
+    component: Dashboard,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/manage-chatbot',
+    component: ManageChatbot,
+    meta: { requiresAuth: true },
+    children: [
+      {
+        path: '',
+        redirect: '/manage-chatbot/intents' // Default ke intents
+      },
+      {
+        path: 'intents',
+        component: IntentManager
+      },
+      {
+        path: 'questions',
+        component: QuestionManager
+      },
+      {
+        path: 'responses',
+        component: ResponseManager
+      }
+    ]
+  },
+  { path: '/:pathMatch(.*)*', redirect: '/' }
 ]
 
 const router = createRouter({
@@ -21,11 +55,14 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('token')
-  console.log('Checking token:', token) // Debug log
+  console.log('Checking token:', token)
+
   if (to.meta.requiresAuth && !token) {
-    next('/login') // Redirect ke login jika tidak ada token
+    next('/login')
+  } else if ((to.path === '/login' || to.path === '/register') && token) {
+    next('/dashboard')
   } else {
-    next() // Izinkan akses jika ada token
+    next()
   }
 })
 

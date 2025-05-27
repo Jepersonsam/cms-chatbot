@@ -1,46 +1,60 @@
 <template>
-  <div class="min-h-screen bg-gray-100">
-    <!-- Navigation Bar -->
-    <nav class="bg-blue-600 p-4 shadow-md">
-      <div class="max-w-5xl mx-auto flex justify-between items-center">
-        <div class="text-white text-2xl font-bold">Chatbot CMS</div>
-        <div v-if="isAuthenticated" class="flex gap-4">
-          <router-link to="/intents">
-            <button class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
-              Manage Intents
-            </button>
+  <div class="min-h-screen flex">
+    <!-- Sidebar (Hanya ditampilkan jika sudah login) -->
+    <nav v-if="isAuthenticated" class="bg-white w-64 p-4 shadow-md h-screen">
+      <div class="flex items-center mb-6">
+        <img src="" alt="Chatbot CMS Logo" class="mr-2" />
+        <span class="text-xl font-bold text-blue-600">Chatbot CMS</span>
+      </div>
+
+      <ul class="space-y-2">
+        <!-- Menu Dashboard -->
+        <li>
+          <router-link to="/dashboard" class="block text-gray-700 hover:bg-blue-100 p-2 rounded" active-class="bg-blue-200">
+            Dashboard
           </router-link>
-          <router-link to="/questions">
-            <button class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
-              Manage Questions
-            </button>
-          </router-link>
-          <router-link to="/responses">
-            <button class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
-              Manage Responses
-            </button>
-          </router-link>
-          <button @click="logout" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition">
+        </li>
+
+        <!-- Manage Chatbot dengan Submenu -->
+        <li>
+          <div class="flex justify-between items-center text-gray-700 hover:bg-blue-100 p-2 rounded cursor-pointer" @click="toggleManageChatbot">
+            Manage Chatbot
+            <span :class="{ 'transform rotate-179': !isManageChatbotOpen }" class="transition-transform">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </span>
+          </div>
+          <ul v-if="isManageChatbotOpen" class="pl-4 space-y-1">
+            <li>
+              <router-link to="/manage-chatbot/intents" class="block text-gray-500 hover:text-gray-700 p-2 rounded bg-blue-50" active-class="bg-blue-100">
+                Intent Manager
+              </router-link>
+            </li>
+            <li>
+              <router-link to="/manage-chatbot/questions" class="block text-gray-500 hover:text-gray-700 p-2 rounded bg-blue-50" active-class="bg-blue-100">
+                Question Manager
+              </router-link>
+            </li>
+            <li>
+              <router-link to="/manage-chatbot/responses" class="block text-gray-500 hover:text-gray-700 p-2 rounded bg-blue-50" active-class="bg-blue-100">
+                Response Manager
+              </router-link>
+            </li>
+          </ul>
+        </li>
+
+        <!-- Logout -->
+        <li>
+          <button @click="logout" class="w-full text-left text-gray-700 hover:bg-red-100 p-2 rounded">
             <LucideLogOut class="inline w-4 h-4 mr-1" /> Logout
           </button>
-        </div>
-        <div v-else class="flex gap-4">
-          <router-link to="/login">
-            <button class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
-              Login
-            </button>
-          </router-link>
-          <router-link to="/register">
-            <button class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
-              Register
-            </button>
-          </router-link>
-        </div>
-      </div>
+        </li>
+      </ul>
     </nav>
 
     <!-- Main Content -->
-    <div class="max-w-5xl mx-auto p-6">
+    <div class="flex-1">
       <router-view />
     </div>
   </div>
@@ -54,37 +68,59 @@ import { LucideLogOut } from 'lucide-vue-next'
 const router = useRouter()
 const route = useRoute()
 
-// Gunakan ref untuk melacak status autentikasi secara reaktif
 const isAuthenticated = ref(!!localStorage.getItem('token'))
+const isManageChatbotOpen = ref(false) // State untuk toggle submenu
 
-// Fungsi untuk memeriksa dan memperbarui status autentikasi
 const checkAuth = () => {
   isAuthenticated.value = !!localStorage.getItem('token')
 }
 
 const logout = () => {
   localStorage.removeItem('token')
-  checkAuth() // Perbarui status autentikasi setelah logout
+  checkAuth()
   router.push('/login')
 }
 
-// Pantau perubahan rute untuk memastikan status autentikasi diperbarui
+const toggleManageChatbot = () => {
+  isManageChatbotOpen.value = !isManageChatbotOpen.value
+}
+
 watch(() => route.path, () => {
   checkAuth()
   console.log('Route changed, auth status:', isAuthenticated.value)
 })
 
-// Periksa status autentikasi saat komponen dimuat
 onMounted(() => {
   checkAuth()
 })
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
+<style scoped>
+.bg-blue-50 {
+  background-color: #E6F0FA;
+}
+
+.bg-blue-100 {
+  background-color: #BFDBFE;
+}
+
+.hover:bg-blue-100:hover {
+  background-color: #E6F0FA;
+}
+
+.hover:bg-red-100:hover {
+  background-color: #FEE2E2;
+}
+
+.rounded {
+  border-radius: 0.375rem;
+}
+
+.transition-transform {
+  transition: transform 0.3s ease;
+}
+
+.transform.rotate-180 {
+  transform: rotate(180deg);
 }
 </style>
