@@ -15,6 +15,24 @@
           </router-link>
         </li>
 
+        <li>
+          <router-link to="/roles" class="block text-gray-700 hover:bg-blue-100 p-2 rounded" active-class="bg-blue-200">
+            Manage Role
+          </router-link>
+        </li>
+
+         <li>
+          <router-link to="/permissions" class="block text-gray-700 hover:bg-blue-100 p-2 rounded" active-class="bg-blue-200">
+            Manage Permission
+          </router-link>
+        </li>
+
+         <li>
+          <router-link to="/users" class="block text-gray-700 hover:bg-blue-100 p-2 rounded" active-class="bg-blue-200">
+            Manage User
+          </router-link>
+        </li>
+
         <!-- Manage Chatbot dengan Submenu -->
         <li>
           <div class="flex justify-between items-center text-gray-700 hover:bg-blue-100 p-2 rounded cursor-pointer" @click="toggleManageChatbot">

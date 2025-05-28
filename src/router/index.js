@@ -6,6 +6,10 @@ import ManageChatbot from '../views/ManageChatbot.vue'
 import IntentManager from '../components/IntentManager.vue'
 import QuestionManager from '../components/QuestionManager.vue'
 import ResponseManager from '../components/ResponseManager.vue'
+import RoleManager from '../views/RoleManager.vue'
+import PermissionManager from '../components/PermissionManager.vue'
+import UserManager from '../components/UserManager.vue'
+
 
 const routes = [
   {
@@ -22,6 +26,20 @@ const routes = [
     component: Dashboard,
     meta: { requiresAuth: true }
   },
+  {
+        path: '/roles', 
+        component: RoleManager
+      },
+      {
+        path: '/permissions',
+        name: 'Permissions',
+        component: PermissionManager
+      },
+      {
+        path: '/users',
+        name: 'users',
+        component: UserManager
+      },
   {
     path: '/manage-chatbot',
     component: ManageChatbot,

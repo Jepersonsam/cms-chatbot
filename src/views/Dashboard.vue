@@ -3,14 +3,14 @@
     <!-- Header -->
     <h1 class="text-2xl font-bold text-gray-800 mb-4">Dashboard</h1>
 
-    <!-- Selamat Datang -->
+    <!-- Selamat Datang
     <div class="bg-blue-300 p-4 rounded-lg shadow mb-6">
       <h2 class="text-xl font-semibold text-gray-700">Selamat Datang di Chatbot CMS</h2>
       <p class="mt-2 text-gray-600">Kelola chatbot Anda dengan efisien. Tanggal: {{ currentDate }}</p>
     </div>
 
     <!-- Statistik Utama -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+    <!-- <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
       <div class="bg-white p-4 rounded-lg shadow">
         <h3 class="text-lg font-semibold text-gray-700">Total Intents</h3>
         <p class="text-2xl text-blue-600">45</p>
@@ -26,14 +26,14 @@
     </div>
 
     <!-- Aktivitas Terbaru -->
-    <div class="bg-white p-4 rounded-lg shadow">
+    <!-- <div class="bg-white p-4 rounded-lg shadow">
       <h3 class="text-lg font-semibold text-gray-700 mb-2">Aktivitas Terbaru</h3>
       <ul class="text-gray-600 space-y-2">
         <li>Intent 'Greeting' ditambahkan pada 09:15 PM, 26 Mei 2025</li>
         <li>Question 'How are you?' diedit pada 09:00 PM, 26 Mei 2025</li>
         <li>Response 'I’m good!' ditambahkan pada 08:45 PM, 26 Mei 2025</li>
       </ul>
-    </div>
+    </div> --> 
 
     <!-- Tombol Navigasi -->
     <!-- <div class="mt-6">
@@ -73,4 +73,4 @@ onMounted(() => {
 </script>
 
 <style scoped>
-</style>
+</style> 
